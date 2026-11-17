@@ -1,0 +1,62 @@
+services:
+  # ============================================================================
+  # AWS EMULATOR
+  # ============================================================================
+  aws-emulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: aws-emulator:local
+    container_name: aws-emulator
+    ports:
+      - "127.0.0.1:9297:9297"
+      - "127.0.0.1:8098:8080"
+    volumes:
+      - aws-emulator-data:/home/emulator/.aws/emulator
+    networks:
+      - emulator-net
+    environment:
+      - EMULATOR_TELEMETRY=off
+      - RUST_LOG=info,service_com_amazonaws_cloudwatch_graniteserviceversion20100801=error
+    mem_limit: 2g
+    memswap_limit: 2g
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl -sf --cacert /home/emulator/.aws/emulator/9297/ca.pem https://127.0.0.1:9297/__admin/health || exit 1",
+        ]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+
+  # ============================================================================
+  # CONSOLE WEB
+  # ============================================================================
+  stackport:
+    image: davireis/stackport:latest
+    container_name: aws-emulator-ui
+    network_mode: "service:aws-emulator"
+    volumes:
+      - aws-emulator-data:/root/.aws/emulator:ro
+    environment:
+      - AWS_ENDPOINT_URL=https://127.0.0.1:9297
+      - AWS_DEFAULT_REGION=us-east-1
+    depends_on:
+      aws-emulator:
+        condition: service_healthy
+    mem_limit: 512m
+    restart: unless-stopped
+
+# ==============================================================================
+# REDES E VOLUMES PERSISTENTES
+# ==============================================================================
+networks:
+  emulator-net:
+    driver: bridge
+
+volumes:
+  aws-emulator-data:
+    driver: local
