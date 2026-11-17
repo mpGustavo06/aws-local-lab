@@ -66,7 +66,7 @@ Antes de clonar e executar o projeto, certifique-se de ter as seguintes ferramen
 ### Passo 1: Clonar o Repositório
 
 ```bash
-git clone https://github.com/mpGustavo06/aws-emulator.git
+git clone https://github.com/mpGustavo06/aws-local-lab.git
 cd aws-emulator
 ```
 
