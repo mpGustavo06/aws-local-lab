@@ -8,7 +8,7 @@ resource "aws_secretsmanager_secret" "app_secrets" {
 resource "aws_secretsmanager_secret_version" "app_secrets_val" {
   secret_id = aws_secretsmanager_secret.app_secrets.id
   secret_string = jsonencode({
-    DB_USERNAME = "app_admin"
+    DB_USERNAME = "appadmin"
     DB_PASSWORD = "SuperSecretPassword123!"
     JWT_SECRET  = "chave-secreta-jwt-local-2026"
   })
