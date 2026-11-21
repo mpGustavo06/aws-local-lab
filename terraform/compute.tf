@@ -43,6 +43,7 @@ resource "aws_lb_listener" "http" {
 resource "aws_instance" "app_server" {
   ami                    = "ami-0c55b159cbfafe1f0" # AMI ficticia aceita pelo emulador local
   instance_type          = "t3.micro"
+  availability_zone      = "us-east-1a"
   subnet_id              = aws_subnet.public_a.id
   vpc_security_group_ids = [aws_security_group.app_sg.id]
   iam_instance_profile   = aws_iam_instance_profile.ec2_profile.name
